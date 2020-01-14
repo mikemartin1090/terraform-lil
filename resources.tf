@@ -19,7 +19,3 @@ resource "aws_subnet" "subnet1" {
         DeleteAfter = "2020-01-14"
     }
 }
-
-resource "type" "name" {
-  
-}

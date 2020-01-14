@@ -3,32 +3,32 @@ locals {
     Owner   = "Mike Martin"
     Project = "Terraform Infrastructure"
   }
-  key_pair = "mmartin-terraform"
+  key_pair  = "mmartin-terraform"
   subnet_id = "subnet-04dcbaca87b5c530f"
 }
 
 data "aws_ami" "ubuntu" {
-    most_recent = true
-    
-    filter {
-        name = "name"
-        values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
-    }
+  most_recent = true
 
-    filter {
-        name = "virtualization-type"
-        values = ["hvm"]
-    }
-    
-    owners = ["099720109477"]
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  owners = ["099720109477"]
 }
 
 resource "aws_instance" "m5example" {
-  ami           =  data.aws_ami.ubuntu.id
+  ami           = data.aws_ami.ubuntu.id
   instance_type = "m5.large"
   ebs_optimized = true
 
-  tags          = local.common_tags
+  tags = local.common_tags
 
   ebs_block_device {
     device_name           = "/dev/sdg"

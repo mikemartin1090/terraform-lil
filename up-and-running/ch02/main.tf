@@ -2,6 +2,11 @@ provider "aws" {
   region = "us-east-2"
 }
 
+# a data source - the default vpc data
+data "aws_vpc" "default" {
+  default = true
+}
+
 # a data source - in this case all subnets within the default VPC
 data "aws_subnet_ids" "default" {
   vpc_id = data.aws_vpc.default.id
@@ -50,14 +55,14 @@ resource "aws_autoscaling_group" "example" {
 }
 
 resource "aws_security_group" "instance" {
-    name = "terraform-example-instance"
+  name = "terraform-example-instance"
 
-    ingress {
-        from_port = var.server_port
-        to_port = var.server_port
-        protocol = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
+  ingress {
+    from_port   = var.server_port
+    to_port     = var.server_port
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
 
 resource "aws_lb" "example" {
@@ -126,8 +131,9 @@ resource "aws_lb_listener_rule" "asg" {
   priority     = 100
 
   condition {
-    field  = "path-pattern"
-    values = ["*"]
+    path_pattern {
+      values = ["*"]
+    }
   }
 
   action {

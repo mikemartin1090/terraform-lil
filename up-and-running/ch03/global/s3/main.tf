@@ -1,3 +1,16 @@
+terraform {
+  backend "s3" {
+    # Replace this with your bucket name!
+    bucket = "glg-terraform-playground-state-mmartin"
+    key    = "global/s3/terraform.tfstate"
+    region = "us-east-2"
+
+    # Replace this with your DynamoDB table name!
+    dynamodb_table = "glg-terraform-playground-state-mmartin"
+    encrypt        = true
+  }
+}
+
 provider "aws" {
   region = "us-east-2"
 }
@@ -5,10 +18,10 @@ provider "aws" {
 resource "aws_s3_bucket" "terraform_state" {
   bucket = "glg-terraform-playground-state-mmartin"
 
-#   # Prevent accidental deletion of this S3 bucket
-#   lifecycle {
-#     prevent_destroy = true
-#   }
+  # Prevent accidental deletion of this S3 bucket
+  lifecycle {
+    prevent_destroy = true
+  }
 
   # Enable versioning so we can see the full revision history of our
   # state files
@@ -26,7 +39,6 @@ resource "aws_s3_bucket" "terraform_state" {
   }
 }
 
-## TODO Figure out why my locking isn't working...
 resource "aws_dynamodb_table" "terraform_locks" {
   name         = "glg-terraform-playground-state-mmartin"
   billing_mode = "PAY_PER_REQUEST"
@@ -36,14 +48,4 @@ resource "aws_dynamodb_table" "terraform_locks" {
     name = "LockID"
     type = "S"
   }
-}
-
-output "s3_bucket_arn" {
-  value       = aws_s3_bucket.terraform_state.arn
-  description = "The ARN of the S3 bucket"
-}
-
-output "dynamodb_table_name" {
-  value       = aws_dynamodb_table.terraform_locks.name
-  description = "The name of the DynamoDB table"
 }

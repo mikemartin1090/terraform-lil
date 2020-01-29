@@ -89,8 +89,8 @@ resource "aws_security_group_rule" "allow_http_inbound" {
   type              = "ingress"
   security_group_id = aws_security_group.instance.id
 
-  from_port   = local.http_port
-  to_port     = local.http_port
+  from_port   = var.server_port
+  to_port     = var.server_port
   protocol    = local.tcp_protocol
   cidr_blocks = local.all_ips
 }
@@ -129,4 +129,9 @@ resource "aws_cloudwatch_metric_alarm" "low_cpu_credit_balance" {
   statistic           = "Minimum"
   threshold           = 10
   unit                = "Count"
+}
+
+locals {
+  tcp_protocol = "tcp"
+  all_ips      = ["0.0.0.0/0"]
 }
